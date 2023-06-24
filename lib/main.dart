@@ -72,35 +72,3 @@ class _MyAppState extends ConsumerState<MyApp> {
         );
   }
 }
-
-// class MyApp extends ConsumerStatefulWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   ConsumerState<ConsumerStatefulWidget> createState() => _MyAppState();
-// }
-
-// class _MyAppState extends State<MyApp> {
-//   @override
-//   Widget build(BuildContext context) {
-//   return ref.watch(authStateChangesProvider).when(
-//     data: (data) => MaterialApp.router(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Reddit Clone',
-//       theme: Pallete.darkModeAppTheme,
-//       routerDelegate: RoutemasterDelegate(
-//           routesBuilder: (context) =>
-//           data != null ? loggedInRoute : loggedOutRoute),
-//       routeInformationParser: const RoutemasterParser(),
-//     ),
-//     loading: () => const CircularProgressIndicator(),
-//     error: (error, stack) => const MaterialApp(
-//       home: Scaffold(
-//         body: Center(
-//           child: Text('Error'),
-//         ),
-//       ),
-//     ),
-//   );
-// }
-// }
