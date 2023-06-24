@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../features/auth/controller/auth_controller.dart';
 import '../theme/pallete.dart';
 import 'constants.dart';
 
-class SignInButton extends StatefulWidget {
+class SignInButton extends ConsumerWidget {
   const SignInButton({super.key});
 
-  @override
-  State<SignInButton> createState() => _SignInButtonState();
-}
+  void signInWithGoogle(BuildContext context, WidgetRef ref) async{
+    ref.read(authControllerProvider.notifier).signInWithGoogle(context);
+  }
+  // Widget ref we will be interact with other providers
 
-class _SignInButtonState extends State<SignInButton> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(18.0),
       child: ElevatedButton.icon(
-        onPressed: () {},
+        onPressed: () => signInWithGoogle(context, ref),
         icon: Image.asset(
           Constants.googleImage,
           width: 30,

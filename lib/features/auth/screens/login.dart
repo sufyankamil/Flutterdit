@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/signin_button.dart';
+import '../controller/auth_controller.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Login extends ConsumerWidget {
+   Login({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
-}
-
-class _LoginState extends State<Login> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(authControllerProvider);
     return Scaffold(
         appBar: AppBar(
           title: Image.asset(
@@ -29,7 +27,8 @@ class _LoginState extends State<Login> {
             )
           ],
         ),
-      body: Column(
+      body: isLoading ? const Center(child: CircularProgressIndicator(),) :
+      Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 50,),
@@ -50,26 +49,6 @@ class _LoginState extends State<Login> {
           ),
           const SizedBox(height: 50,),
           SignInButton(),
-          // TextButton(
-          //   onPressed: () {},
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Image.asset(
-          //         Constants.googleImage,
-          //         height: 30,
-          //       ),
-          //       const SizedBox(width: 10,),
-          //       const Text(
-          //         'Sign in with Google',
-          //         style: TextStyle(
-          //           fontSize: 20,
-          //           fontWeight: FontWeight.bold,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );
