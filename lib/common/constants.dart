@@ -1,0 +1,59 @@
+class Constants {
+  Constants._privateConstructor();
+
+  static final Constants _instance = Constants._privateConstructor();
+
+  static Constants get instance => _instance;
+
+  // Constants for SplashScreen
+  static const String splashScreenImage = 'assets/images/logo.png';
+  static const String splashScreenText =
+      'Manage your tasks easily with Task Management App';
+  static const String splashScreenRoute = '/task-page';
+  static const String defaultRoute = '/';
+
+  // Constants for LoginScreen
+  static const String loginScreenRoute = '/login';
+  static const String loginText = 'Login';
+  static const String logoImage = 'assets/images/logo.png';
+  static const loginEmote = 'assets/images/loginEmote.png';
+  static const String googleImage = 'assets/images/google.png';
+  static const String skipText = 'Skip';
+  static const String diveInText = 'Dive in to the world of Reddit';
+  static const String continueWithGoogle = 'Continue with Google';
+
+  // Constants for TaskPage
+  static const String homeRoute = '/home';
+  static const String taskRoute = '/task-page';
+  static const String addTaskText = 'Add Task';
+  static const String titleText = 'Title';
+  static const String titleHint = 'Enter your title to add task';
+  static const String noteText = 'Note';
+  static const String noteHint = 'Enter your note';
+  static const String dateText = 'Date';
+  static const String startTimeText = 'Start Time';
+  static const String endTimeText = 'End Time';
+  static const String pickDateText = 'Pick Date';
+  static const String pickTimeText = 'Pick Time';
+  static const String pickEndTimeText = 'Pick End Time';
+  static const String remind = 'Remind';
+  static const String repeatText = 'Repeat';
+  static const String colorText = 'Color';
+  static const String createText = 'Create Task';
+  static const String required = 'Required Field';
+  static const String fieldsRequired = 'All fields are required';
+  static const String taskCompleted = 'Task Completed';
+  static const String taskDeleted = 'Delete Task';
+  static const String cancel = 'Cancel';
+  static const String taskDeletedMessage = 'Task deleted successfully';
+
+  // Constants for HomePage
+  static const noTask = 'No Task Found';
+  static const String today = 'Today';
+  static const String addTask = '+ Add Task';
+  static const String appName = 'Task Management';
+
+  // Constants for Edit Page
+  static const edit = 'Edit Task';
+  static const update = 'Update Task';
+}
