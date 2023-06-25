@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
-import 'package:reddit/features/auth/screens/login.dart';
 import 'package:reddit/models/user_modal.dart';
 import 'package:reddit/router.dart';
 import 'package:reddit/theme/pallete.dart';

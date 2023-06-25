@@ -28,7 +28,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     // final isCreateButtonEnabled = communityNameController.text.isNotEmpty;
 
@@ -41,7 +41,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   children: [
                     const Align(
@@ -80,7 +80,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
                     //     : const SizedBox.shrink(),
                     ElevatedButton(
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
+                          if (formKey.currentState!.validate()) {
                             setState(() {});
                             createCommunity();
                           }

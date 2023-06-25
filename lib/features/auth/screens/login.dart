@@ -6,7 +6,7 @@ import '../../../common/signin_button.dart';
 import '../controller/auth_controller.dart';
 
 class Login extends ConsumerWidget {
-   Login({super.key});
+   const Login({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,7 +48,7 @@ class Login extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 50,),
-          SignInButton(),
+          const SignInButton(),
         ],
       ),
     );

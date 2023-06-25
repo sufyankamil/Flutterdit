@@ -44,8 +44,11 @@ class CommunityScreen extends ConsumerWidget {
                                 radius: 25,
                                 backgroundImage: NetworkImage(community.avatar),
                               ),
-                              title: Text(
-                                  '${community.name} - ${community.members.length} members'),
+                              title: community.members.length > 1
+                                  ? Text(
+                                      '${community.name} - ${community.members.length} members')
+                                  : Text(
+                                      '${community.name} - ${community.members.length} member'),
                               subtitle: Text(community.description),
                               trailing: community.moderators.contains(user.uid)
                                   ? OutlinedButton(
@@ -66,10 +69,10 @@ class CommunityScreen extends ConsumerWidget {
                                         side: const BorderSide(
                                             color: Colors.white),
                                       ),
-                                      child: Text(community.members
-                                          .contains(user.uid)
-                                          ? 'Joined'
-                                          : 'Join'),
+                                      child: Text(
+                                          community.members.contains(user.uid)
+                                              ? 'Joined'
+                                              : 'Join'),
                                     ),
                             ),
                           ),

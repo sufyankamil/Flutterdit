@@ -27,5 +27,5 @@ final loggedInRoute = RouteMap(routes: {
 
 // logout route
 final loggedOutRoute = RouteMap(routes: {
-  '/': (_) => MaterialPage(child: Login()),
+  '/': (_) => const MaterialPage(child: Login()),
 },);
