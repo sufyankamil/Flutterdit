@@ -28,12 +28,12 @@ class ProfileDrawer extends ConsumerWidget {
             CircleAvatar(
               radius: 50,
               backgroundImage: NetworkImage(
-                user?.photoUrl ?? '',
+                user.photoUrl,
               ),
             ),
             const SizedBox(height: 20),
             Text(
-              user?.name ?? '',
+              user.name,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -41,7 +41,7 @@ class ProfileDrawer extends ConsumerWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              user?.email ?? '',
+              user.email,
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,

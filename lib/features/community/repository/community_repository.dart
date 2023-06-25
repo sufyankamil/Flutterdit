@@ -17,7 +17,7 @@ class CommunityRepository {
   final FirebaseFirestore _firestore;
 
   CommunityRepository({required FirebaseFirestore firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+      : _firestore = firestore;
 
   FutureVoid createCommunity(Community community) async {
     try {
