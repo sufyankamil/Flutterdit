@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/models/community_model.dart';
+import 'package:reddit/providers/failure.dart';
 import 'package:routemaster/routemaster.dart';
 
 import '../../../common/constants.dart';
@@ -36,7 +38,8 @@ final getCommunityByNameProvider = StreamProvider.family((ref, String name) {
       .getCommunityByName(name);
 });
 
-final searchCommunityProvider = StreamProvider.family<List<Community>, String>((ref, String query) {
+final searchCommunityProvider =
+    StreamProvider.family<List<Community>, String>((ref, String query) {
   final communityController = ref.watch(communityControllerProvider.notifier);
   return communityController.searchCommunity(query);
 });
@@ -77,6 +80,35 @@ class CommunityController extends StateNotifier<bool> {
       Routemaster.of(context).pop();
     });
   }
+
+  void joinCommunity(Community community, BuildContext context) async {
+    state = true;
+    final uid = _ref.read(userProvider)?.uid ?? '';
+    Either<Failure, void> result;
+    if (community.members.contains(uid)) {
+       result = await _communityRepository.leaveCommunity(community.name, uid);
+    } else {
+        result = await _communityRepository.joinCommunity(community.name, uid);
+    }
+    result.fold((l) => showSnackBar(context, l.message), (r) {
+      if(community.members.contains(uid)) {
+        showSnackBar(context, 'Community left successfully');
+      } else {
+        showSnackBar(context, 'Community joined successfully');
+      }
+    });
+    state = false;
+  }
+
+  // void leaveCommunity(Community community, BuildContext context) async {
+  //   state = true;
+  //   final uid = _ref.read(userProvider)?.uid ?? '';
+  //   final result = await _communityRepository.leaveCommunity(community.name, uid);
+  //   result.fold((l) => showSnackBar(context, l.message), (r) {
+  //     showSnackBar(context, 'Community left successfully');
+  //   });
+  //   state = false;
+  // }
 
   Stream<List<Community>> getCommunities() {
     final uid = _ref.read(userProvider)?.uid ?? '';
@@ -125,5 +157,15 @@ class CommunityController extends StateNotifier<bool> {
 
   Stream<List<Community>> searchCommunity(String query) {
     return _communityRepository.searchCommunity(query);
+  }
+
+  void addMods(String communityName, List<String> uids, BuildContext context) async {
+    state = true;
+    final result = await _communityRepository.addMods(communityName, uids);
+    result.fold((l) => showSnackBar(context, l.message), (r) {
+      Routemaster.of(context).pop();
+      showSnackBar(context, 'Mods added successfully');
+    });
+    state = false;
   }
 }

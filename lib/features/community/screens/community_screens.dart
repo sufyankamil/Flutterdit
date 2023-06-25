@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit/features/community/controller/community_controller.dart';
+import 'package:reddit/models/community_model.dart';
 import 'package:routemaster/routemaster.dart';
 
 import '../../auth/controller/auth_controller.dart';
@@ -12,6 +13,12 @@ class CommunityScreen extends ConsumerWidget {
 
   void navigateToModerator(BuildContext context) {
     Routemaster.of(context).push('/mod-tools/$name');
+  }
+
+  void joinCommunity(WidgetRef ref, BuildContext context, Community community) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .joinCommunity(community, context);
   }
 
   @override
@@ -35,47 +42,91 @@ class CommunityScreen extends ConsumerWidget {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                radius: 25,
-                                backgroundImage: NetworkImage(community.avatar),
-                              ),
-                              title: community.members.length > 1
-                                  ? Text(
-                                      '${community.name} - ${community.members.length} members')
-                                  : Text(
-                                      '${community.name} - ${community.members.length} member'),
-                              subtitle: Text(community.description),
-                              trailing: community.moderators.contains(user.uid)
-                                  ? OutlinedButton(
-                                      onPressed: () {
-                                        navigateToModerator(context);
-                                      },
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        side: const BorderSide(
-                                            color: Colors.white),
-                                      ),
-                                      child: const Text('Moderator'),
-                                    )
-                                  : OutlinedButton(
-                                      onPressed: () {},
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: Colors.white,
-                                        side: const BorderSide(
-                                            color: Colors.white),
-                                      ),
-                                      child: Text(
-                                          community.members.contains(user.uid)
-                                              ? 'Joined'
-                                              : 'Join'),
+                          community.members.contains(user.uid)
+                              ? Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 25,
+                                      backgroundImage:
+                                          NetworkImage(community.avatar),
                                     ),
-                            ),
-                          ),
+                                    title: community.members.length > 1
+                                        ? Text(
+                                            '${community.name} - ${community.members.length} members')
+                                        : Text(
+                                            '${community.name} - ${community.members.length} member'),
+                                    subtitle: Text(community.description),
+                                    trailing:
+                                        community.moderators.contains(user.uid)
+                                            ? OutlinedButton(
+                                                onPressed: () {
+                                                  navigateToModerator(context);
+                                                },
+                                                style: OutlinedButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  side: const BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                child: const Text('Moderator'),
+                                              )
+                                            : OutlinedButton(
+                                                onPressed: () => joinCommunity(
+                                                    ref, context, community),
+                                                style: OutlinedButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  side: const BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                child: const Text('Leave'),
+                                              ),
+                                  ),
+                                )
+                              : Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: ListTile(
+                                      leading: CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage:
+                                            NetworkImage(community.avatar),
+                                      ),
+                                      title: community.members.length > 1
+                                          ? Text(
+                                              '${community.name} - ${community.members.length} members')
+                                          : Text(
+                                              '${community.name} - ${community.members.length} member'),
+                                      subtitle: Text(community.description),
+                                      trailing: community.moderators
+                                              .contains(user.uid)
+                                          ? OutlinedButton(
+                                              onPressed: () {
+                                                navigateToModerator(context);
+                                              },
+                                              style: OutlinedButton.styleFrom(
+                                                foregroundColor: Colors.white,
+                                                side: const BorderSide(
+                                                    color: Colors.white),
+                                              ),
+                                              child: const Text('Moderator'),
+                                            )
+                                          : OutlinedButton(
+                                              onPressed: () => joinCommunity(
+                                                  ref, context, community),
+                                              style: OutlinedButton.styleFrom(
+                                                foregroundColor: Colors.white,
+                                                side: const BorderSide(
+                                                    color: Colors.white),
+                                              ),
+                                              child: Text(community.members
+                                                      .contains(user.uid)
+                                                  ? 'Joined'
+                                                  : 'Join'),
+                                            )),
+                                ),
                         ],
                       ),
                     ),

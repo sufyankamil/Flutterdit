@@ -17,7 +17,7 @@ class CommunityRepository {
   final FirebaseFirestore _firestore;
 
   CommunityRepository({required FirebaseFirestore firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+      : _firestore = firestore;
 
   FutureVoid createCommunity(Community community) async {
     try {
@@ -26,6 +26,30 @@ class CommunityRepository {
         throw 'Community with name ${community.name} already exists';
       }
       return right(_communities.doc(community.name).set(community.toMap()));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureVoid joinCommunity(String communityName, String userId) async {
+    try {
+      return right(_communities.doc(communityName).update({
+        'members': FieldValue.arrayUnion([userId])
+      }));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  FutureVoid leaveCommunity(String communityName, String userId) async {
+    try {
+      return right(_communities.doc(communityName).update({
+        'members': FieldValue.arrayRemove([userId])
+      }));
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
@@ -81,6 +105,19 @@ class CommunityRepository {
       }
       return communities;
     });
+  }
+
+  FutureVoid addMods(String communityName, List<String> uids) async {
+    try{
+      return right(_communities.doc(communityName).update({
+       'moderators': uids,
+      }));
+
+    }  on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
   }
 
   CollectionReference get _communities =>

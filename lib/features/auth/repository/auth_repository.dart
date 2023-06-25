@@ -26,9 +26,9 @@ class AuthRepository {
     required FirebaseFirestore firestore,
     required FirebaseAuth auth,
     required GoogleSignIn googleSignIn,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn();
+  })  : _firestore = firestore,
+        _auth = auth,
+        _googleSignIn = googleSignIn;
 
   CollectionReference get _users => _firestore.collection(Constants.usersCollection);
 
@@ -44,8 +44,6 @@ class AuthRepository {
       );
 
       UserCredential userCredential = await _auth.signInWithCredential(credential);
-
-      print(userCredential.user!.email);
 
       UserModel user;
 
@@ -76,8 +74,6 @@ class AuthRepository {
     } catch (e) {
       print(e.toString());
       return left(Failure(e.toString()));
-    } finally {
-      print('finally');
     }
   }
 
@@ -86,5 +82,10 @@ class AuthRepository {
     return _users.doc(uid).snapshots().map((snapshot) {
       return UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
     });
+  }
+
+  void logout() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
   }
 }
