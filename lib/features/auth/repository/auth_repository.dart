@@ -87,4 +87,9 @@ class AuthRepository {
       return UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
     });
   }
+
+  void logout() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
+  }
 }
