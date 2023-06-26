@@ -49,6 +49,7 @@ class SearchCommunityDelegate extends SearchDelegate {
                   title: Text(communities[index].name),
                   subtitle: Text(communities[index].description),
                 );
+                return null;
               },
             );
           },
@@ -67,8 +68,4 @@ class SearchCommunityDelegate extends SearchDelegate {
     // Navigator.of(context).pushNamed('/community/$name');
     Routemaster.of(context).push('/$communityName');
   }
-
-  // void navigateToCommunity(BuildContext context, Community community) {
-  //   Routemaster.of(context).push('/${community.name}');
-  // }
 }

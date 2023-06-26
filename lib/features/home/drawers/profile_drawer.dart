@@ -65,15 +65,16 @@ class ProfileDrawer extends ConsumerWidget {
               onTap: () {},
             ),
             ListTile(
-              leading: const Icon(Icons.color_lens_outlined),
+              leading: const Icon(Icons.shield_moon_outlined),
               title: const Text('Switch Theme'),
-              onTap: () {},
+              onTap: () {
+                toggleTheme(ref);
+              },
             ),
-            const SizedBox(height: 20),
-            Switch.adaptive(
-              value: ref.watch(themeNotifierProvider.notifier).mode ==
-                  ThemeMode.dark,
-              onChanged: (value) => toggleTheme(ref),
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('Help'),
+              onTap: () {},
             ),
             const SizedBox(height: 20),
             ElevatedButton(
