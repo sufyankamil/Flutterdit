@@ -16,6 +16,10 @@ class ProfileDrawer extends ConsumerWidget {
     ref.read(authControllerProvider.notifier).logout();
   }
 
+  void toggleTheme(WidgetRef ref) {
+    ref.read(themeNotifierProvider.notifier).toggleTheme();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
@@ -67,8 +71,9 @@ class ProfileDrawer extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
             Switch.adaptive(
-              value: true,
-              onChanged: (value) {},
+              value: ref.watch(themeNotifierProvider.notifier).mode ==
+                  ThemeMode.dark,
+              onChanged: (value) => toggleTheme(ref),
             ),
             const SizedBox(height: 20),
             ElevatedButton(

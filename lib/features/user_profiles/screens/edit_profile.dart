@@ -3,25 +3,29 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:reddit/common/constants.dart';
-import 'package:reddit/common/utils.dart';
-import 'package:reddit/features/community/controller/community_controller.dart';
+import 'package:reddit/features/auth/controller/auth_controller.dart';
+import 'package:reddit/features/user_profiles/controller/user_profile_controller.dart';
+import 'package:routemaster/routemaster.dart';
 
+import '../../../common/constants.dart';
+import '../../../common/utils.dart';
 import '../../../models/community_model.dart';
 import '../../../theme/pallete.dart';
+import '../../community/controller/community_controller.dart';
 
-class EditCommunity extends ConsumerStatefulWidget {
-  final String name;
+class EditProfile extends ConsumerStatefulWidget {
+  final String uid;
 
-  const EditCommunity({Key? key, required this.name}) : super(key: key);
+  const EditProfile({Key? key, required this.uid}) : super(key: key);
 
   @override
-  ConsumerState createState() => _EditCommunityState();
+  ConsumerState createState() => _EditProfileState();
 }
 
-class _EditCommunityState extends ConsumerState<EditCommunity> {
+class _EditProfileState extends ConsumerState<EditProfile> {
   File? bannerImage;
   File? profileImage;
+  late TextEditingController _nameController;
 
   void selectBannerImage() async {
     final result = await pickImage();
@@ -52,32 +56,39 @@ class _EditCommunityState extends ConsumerState<EditCommunity> {
         showText = true;
       });
     });
+    _nameController = TextEditingController(text: ref.read(userProvider)!.name);
   }
 
-  // Function to save the the edited community
-  void save(Community community) {
-    ref.read(communityControllerProvider.notifier).editCommunity(
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  // Function to save the the edited profile
+  void save() {
+    ref.read(userProfileControllerProvider.notifier).editProfile(
           profileFile: profileImage,
           bannerFile: bannerImage,
-          community: community,
+          name: _nameController.text.trim(),
           context: context,
         );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(communityControllerProvider);
+    final isLoading = ref.watch(userProfileControllerProvider);
     final currentTheme = ref.watch(themeNotifierProvider);
-    return ref.watch(getCommunityByNameProvider(widget.name)).when(
-          data: (community) => Scaffold(
+    return ref.watch(getUserDataProvider(widget.uid)).when(
+          data: (user) => Scaffold(
             backgroundColor: currentTheme.backgroundColor,
             appBar: AppBar(
-              title: const Text('Edit Community'),
+              title: const Text('Edit Profile'),
               centerTitle: false,
               actions: [
                 TextButton(
                   child: const Text('Save'),
-                  onPressed: () => save(community),
+                  onPressed: () => save(),
                 ),
               ],
             ),
@@ -109,7 +120,9 @@ class _EditCommunityState extends ConsumerState<EditCommunity> {
                                   borderType: BorderType.RRect,
                                   dashPattern: const [8, 4],
                                   strokeCap: StrokeCap.round,
-                                  color: currentTheme.textTheme.bodyText2!.color!,
+                                  color: currentTheme
+                                      .textTheme.bodyLarge!.color!
+                                      .withOpacity(0.5),
                                   strokeWidth: 1,
                                   child: Container(
                                     height: 150,
@@ -122,19 +135,21 @@ class _EditCommunityState extends ConsumerState<EditCommunity> {
                                             bannerImage!,
                                             fit: BoxFit.cover,
                                           )
-                                        : community.banner.isEmpty ||
-                                                community.banner ==
+                                        : user.banner.isEmpty ||
+                                                user.banner ==
                                                     Constants.bannerDefault
                                             ?  Center(
                                                 child: Icon(
                                                   Icons.add_a_photo,
                                                   color: currentTheme
-                                                      .colorScheme.background,
+                                                      .textTheme
+                                                      .bodyLarge!
+                                                      .color,
                                                   size: 40,
                                                 ),
                                               )
                                             : Image.network(
-                                                community.banner,
+                                                user.banner,
                                                 fit: BoxFit.cover,
                                               ),
                                   ),
@@ -153,13 +168,31 @@ class _EditCommunityState extends ConsumerState<EditCommunity> {
                                         )
                                       : CircleAvatar(
                                           backgroundImage:
-                                              NetworkImage(community.avatar),
+                                              NetworkImage(user.photoUrl),
                                           radius: 25,
                                         ),
                                 ),
                               )
                             ],
                           ),
+                        ),
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: const InputDecoration(
+                            filled: true,
+                            labelText: 'Name',
+                            hintText: 'Enter the name of the community',
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.blue,
+                              ),
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(17),
+                          ),
+                          // onChanged: (value) {
+                          //   user = user.copyWith(name: value);
+                          // },
                         ),
                       ],
                     ),

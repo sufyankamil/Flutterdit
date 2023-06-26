@@ -6,6 +6,7 @@ import 'package:reddit/features/community/screens/community_screens.dart';
 import 'package:reddit/features/community/screens/create_community.dart';
 import 'package:reddit/features/community/screens/edit_community_screen.dart';
 import 'package:reddit/features/home/home_screen.dart';
+import 'package:reddit/features/user_profiles/screens/edit_profile.dart';
 import 'package:reddit/features/user_profiles/screens/user_profile.dart';
 import 'package:routemaster/routemaster.dart';
 
@@ -35,6 +36,10 @@ final loggedInRoute = RouteMap(
         )),
     '/profile/:uid': (routeData) => MaterialPage(
             child: UserProfileScreen(
+          uid: routeData.pathParameters['uid']!,
+        )),
+    '/edit-profile/:uid': (routeData) => MaterialPage(
+        child: EditProfile(
           uid: routeData.pathParameters['uid']!,
         )),
   },
