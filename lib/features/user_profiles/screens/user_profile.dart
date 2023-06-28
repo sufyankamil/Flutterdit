@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,6 +17,8 @@ class UserProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    // print(isEmailVerified);
     return Scaffold(
       body: ref.watch(getUserDataProvider(uid)).when(
             data: (user) => NestedScrollView(
@@ -77,7 +80,7 @@ class UserProfileScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                user.isAuthenticated
+                                isEmailVerified
                                     ? IconButton(
                                         icon: const FaIcon(
                                           FontAwesomeIcons.check,
@@ -86,6 +89,15 @@ class UserProfileScreen extends ConsumerWidget {
                                         onPressed: () {},
                                       )
                                     : const SizedBox.shrink(),
+                                // user.isAuthenticated
+                                //     ? IconButton(
+                                //         icon: const FaIcon(
+                                //           FontAwesomeIcons.check,
+                                //           color: Colors.green,
+                                //         ),
+                                //         onPressed: () {},
+                                //       )
+                                //     : const SizedBox.shrink(),
                               ],
                             ),
                             Padding(
