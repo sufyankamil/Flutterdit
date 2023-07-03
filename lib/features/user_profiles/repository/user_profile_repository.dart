@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:reddit/models/post_model.dart';
 import 'package:reddit/models/user_modal.dart';
 
 import '../../../common/constants.dart';
@@ -12,7 +13,6 @@ final userProfileRepositoryProvider = Provider<UserProfileRepository>((ref) {
   final firestore = ref.watch(firestoreProvider);
   return UserProfileRepository(firestore: firestore);
 });
-
 
 class UserProfileRepository {
   final FirebaseFirestore _firestore;
@@ -30,6 +30,21 @@ class UserProfileRepository {
     }
   }
 
+  Stream<List<Post>> getUserPosts(String uid) {
+    return _posts
+        .where('uid', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Post.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+    });
+  }
+
   CollectionReference get _users =>
       _firestore.collection(Constants.usersCollection);
+
+  CollectionReference get _posts =>
+      _firestore.collection(Constants.postsCollection);
 }

@@ -78,7 +78,7 @@ class _AddPostTypeState extends ConsumerState<AddPostType> {
             link: linkController.text.trim(),
           );
     } else {
-      showSnackBar(context, 'Please enter valid url');
+      showSnackBar(context, 'Please enter all the fields');
     }
   }
 
@@ -242,24 +242,6 @@ class _AddPostTypeState extends ConsumerState<AddPostType> {
                                 });
                               },
                             );
-                            // return DropdownButton(
-                            //   value: selectedCommunity ?? data[0],
-                            //   items: data.map((e) => DropdownMenuItem(
-                            //     value: e,
-                            //     child: Text(e.name),
-                            //   )).toList(),
-                            //   onTap: () {
-                            //     FocusScope.of(context).unfocus();
-                            //
-                            //   },
-                            //   onChanged: (value) {
-                            //     setState(() {
-                            //
-                            //       selectedCommunity = value as Community;
-                            //       print(selectedCommunity!);
-                            //     });
-                            //   },
-                            // );
                           },
                           loading: () => const Center(
                             child: CircularProgressIndicator(),

@@ -1,5 +1,7 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
@@ -15,6 +17,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -32,6 +35,45 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   UserModel? user;
 
+  @override
+  void initState() {
+    super.initState();
+    checkInternetConnectivityAndLaunchApp(context);
+  }
+
+  void checkInternetConnectivityAndLaunchApp(BuildContext context) async {
+    // Check internet connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      print('checking net');
+      if(context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) =>
+              CupertinoAlertDialog(
+                title: const Text('No Internet'),
+                content: const Text('Please check your internet connection'),
+                actions: [
+                  CupertinoDialogAction(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+        );
+      }
+    } else {
+      // Launch app
+      runApp(
+        const ProviderScope(
+          child: MyApp(),
+        ),
+      );
+    }
+  }
+
   void getData(WidgetRef ref, User data) async {
     user = await ref
         .watch(authControllerProvider.notifier)
@@ -48,15 +90,16 @@ class _MyAppState extends ConsumerState<MyApp> {
             debugShowCheckedModeBanner: false,
             title: 'Reddit Clone',
             theme: ref.watch(themeNotifierProvider),
-            routerDelegate: RoutemasterDelegate(routesBuilder: (context) {
-              if (data != null) {
-                getData(ref, data);
-                if(user != null) {
-                  return loggedInRoute;
+            routerDelegate: RoutemasterDelegate(
+              routesBuilder: (context) {
+                if (data != null) {
+                  getData(ref, data);
+                  if (user != null) {
+                    return loggedInRoute;
+                  }
                 }
-              }
-              return loggedOutRoute;
-            },
+                return loggedOutRoute;
+              },
             ),
             routeInformationParser: const RoutemasterParser(),
           ),

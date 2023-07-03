@@ -5,6 +5,7 @@ import 'package:reddit/common/constants.dart';
 import 'package:reddit/models/community_model.dart';
 import 'package:reddit/providers/type_defs.dart';
 
+import '../../../models/post_model.dart';
 import '../../../providers/failure.dart';
 import '../../../providers/providers.dart';
 
@@ -119,6 +120,22 @@ class CommunityRepository {
       return left(Failure(e.toString()));
     }
   }
+
+    Stream<List<Post>> getCommunityPosts(String name) {
+    return _posts
+        .where('communityName', isEqualTo: name)
+        .snapshots()
+        .map((snapshot) {
+      List<Post> posts = [];
+      for (var doc in snapshot.docs) {
+        posts.add(Post.fromMap(doc.data() as Map<String, dynamic>));
+      }
+      return posts;
+    });
+  }
+
+  CollectionReference get _posts =>
+      _firestore.collection(Constants.postsCollection);
 
   CollectionReference get _communities =>
       _firestore.collection(Constants.communitiesCollection);

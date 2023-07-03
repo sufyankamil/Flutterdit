@@ -12,7 +12,8 @@ import '../../../models/community_model.dart';
 import '../../../providers/storage_repository.dart';
 import '../../auth/controller/auth_controller.dart';
 
-final postControllerProvider = StateNotifierProvider<PostController, bool>((ref) {
+final postControllerProvider =
+    StateNotifierProvider<PostController, bool>((ref) {
   final postRepository = ref.watch(postRepositoryProvider);
 
   final storageRepository = ref.watch(storageRepositoryProvider);
@@ -24,9 +25,15 @@ final postControllerProvider = StateNotifierProvider<PostController, bool>((ref)
   );
 });
 
-final userPostsProvider = StreamProvider.family((ref, List<Community> communities) {
+final userPostsProvider =
+    StreamProvider.family((ref, List<Community> communities) {
   final postController = ref.watch(postControllerProvider.notifier);
   return postController.fetchUserPosts(communities);
+});
+
+final postByIdProvider = StreamProvider.family<Post, String>((ref, id) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.getpostById(id);
 });
 
 class PostController extends StateNotifier<bool> {
@@ -176,10 +183,73 @@ class PostController extends StateNotifier<bool> {
   }
 
   Stream<List<Post>> fetchUserPosts(List<Community> communities) {
-    if(communities.isNotEmpty) {
+    if (communities.isNotEmpty) {
       return _postRepository.fetchUserPosts(communities);
     } else {
       return Stream.value([]);
     }
+  }
+
+  void deletePost(Post post, BuildContext context) async {
+    final result = await _postRepository.deletePost(post);
+    result.fold(
+      (failure) {
+        showSnackBar(context, failure.message);
+      },
+      (success) {
+        showSnackBar(context, 'Post deleted successfully');
+      },
+    );
+  }
+
+  void upVotePost(Post post) async {
+    final user = _ref.read(userProvider)!.uid;
+    _postRepository.upVote(post, user);
+  }
+
+  void downVotePost(Post post) async {
+    final user = _ref.read(userProvider)!.uid;
+    _postRepository.downVote(post, user);
+  }
+
+  void addComment({
+    Post? post,
+    required String comment,
+    required BuildContext context,
+  }) async {
+    final user = _ref.read(userProvider)!;
+    final commentPost = Post(
+      comments: comment,
+      createdAt: DateTime.now(),
+      username: user.name,
+      uid: user.uid,
+      communityName: post!.communityName,
+      communityProfile: post.communityProfile,
+      id: post.id,
+      title: post.title,
+      description: post.description,
+      upVotes: post.upVotes,
+      downVotes: post.downVotes,
+      commentCount: post.commentCount,
+      type: post.type,
+      awards: post.awards,
+      link: post.link,
+    );
+
+    final result =
+        await _postRepository.addComment(commentPost, post.id, user.uid);
+
+    result.fold(
+      (failure) {
+        showSnackBar(context, failure.message);
+      },
+      (success) {
+        showSnackBar(context, 'Comment added successfully');
+      },
+    );
+  }
+
+  Stream<Post> getpostById(String id) {
+    return _postRepository.getpostById(id);
   }
 }
