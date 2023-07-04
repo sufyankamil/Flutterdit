@@ -20,7 +20,7 @@ class UserProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-    // print(isEmailVerified);
+
     return Scaffold(
       body: ref.watch(getUserDataProvider(uid)).when(
             data: (user) => NestedScrollView(

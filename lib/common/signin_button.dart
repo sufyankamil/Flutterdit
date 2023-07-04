@@ -6,12 +6,19 @@ import '../theme/pallete.dart';
 import 'constants.dart';
 
 class SignInButton extends ConsumerWidget {
-  const SignInButton({super.key});
+  final bool isFromLogin;
 
-  void signInWithGoogle(BuildContext context, WidgetRef ref) async{
+  const SignInButton({Key? key, this.isFromLogin = false}) : super(key: key);
+
+  // void signInWithGoogle(BuildContext context, WidgetRef ref) async {
+  //   ref
+  //       .read(authControllerProvider.notifier)
+  //       .signInWithGoogle(context, isFromLogin);
+  // }
+
+  void signInWithGoogle(BuildContext context, WidgetRef ref) async {
     ref.read(authControllerProvider.notifier).signInWithGoogle(context);
   }
-  // Widget ref we will be interact with other providers
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,7 +33,7 @@ class SignInButton extends ConsumerWidget {
         label: const Text(
           Constants.continueWithGoogle,
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),

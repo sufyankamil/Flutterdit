@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:reddit/common/constants.dart';
 import 'package:reddit/features/community/controller/community_controller.dart';
 import 'package:reddit/features/post/controller/post_controller.dart';
 import 'package:reddit/models/post_model.dart';
@@ -38,6 +39,12 @@ class PostCard extends ConsumerWidget {
 
   void navigateToComments(BuildContext context) {
     Routemaster.of(context).push('/posts/${post.id}/comments');
+  }
+
+  void awardPost(WidgetRef ref, String award, BuildContext context) {
+    ref
+        .read(postControllerProvider.notifier)
+        .awardsPost(post: post, award: award, context: context);
   }
 
   @override
@@ -109,6 +116,83 @@ class PostCard extends ConsumerWidget {
                     child: const Text('Report'),
                   );
                 }),
+              ],
+            );
+          });
+    }
+
+    isGiftCard() {
+      showDialog(
+          context: context,
+          builder: (dialogContex) {
+            return Dialog(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (user.awards.isNotEmpty) const Text('Give Award'),
+                    user.awards.isNotEmpty
+                        ? const SizedBox(height: 10)
+                        : const SizedBox(),
+                    if (user.awards.isEmpty)
+                      const Text('You have no awards left to give',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          )),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: user.awards.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemBuilder: (context, index) {
+                        final award = user.awards[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            awardPost(ref, award, context);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(Constants.awards[award]!),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
+    }
+
+    isConfirmGift() {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              title: const Text('Give Award'),
+              content: const Text('Are you sure you want to give award?'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    isGiftCard();
+                  },
+                  child: const Text('Give Award'),
+                ),
               ],
             );
           });
@@ -196,6 +280,10 @@ class PostCard extends ConsumerWidget {
                                     value: 'report',
                                     child: Text('Report'),
                                   ),
+                                  const PopupMenuItem(
+                                    value: 'bookmark',
+                                    child: Text('Bookmark'),
+                                  ),
                                 ],
                                 onSelected: (value) {
                                   if (value == 'delete') {
@@ -203,6 +291,17 @@ class PostCard extends ConsumerWidget {
                                   }
                                   if (value == 'report') {
                                     isReport();
+                                  }
+                                  if (value == 'bookmark') {
+                                    Fluttertoast.showToast(
+                                      timeInSecForIosWeb: 4,
+                                      webBgColor: '#FF0000',
+                                      msg: 'Post Bookmarked',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.greenAccent,
+                                      textColor: Colors.black,
+                                    );
                                   }
                                 },
                               ),
@@ -213,12 +312,31 @@ class PostCard extends ConsumerWidget {
                             child: Text(
                               post.title,
                               style: TextStyle(
-                                color: currentTheme.textTheme.bodyText1!.color,
+                                color: currentTheme.textTheme.bodyLarge!.color,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
+                          if (post.awards.isNotEmpty) ...[
+                            const SizedBox(height: 7),
+                            SizedBox(
+                              height: 30,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: post.awards.length,
+                                itemBuilder: (context, index) {
+                                  final award = post.awards[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.asset(Constants.awards[award]!,
+                                        height: 30, width: 30),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                           if (isTypeImage)
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.35,
@@ -293,7 +411,7 @@ class PostCard extends ConsumerWidget {
                                   IconButton(
                                     onPressed: () {},
                                     icon: Icon(
-                                      Icons.share,
+                                      Icons.send_outlined,
                                       color: currentTheme
                                           .textTheme.bodyLarge!.color,
                                     ),
@@ -329,8 +447,7 @@ class PostCard extends ConsumerWidget {
                                       if (community.moderators
                                           .contains(user.uid)) {
                                         return IconButton(
-                                          onPressed: () =>
-                                              deletePost(ref, context),
+                                          onPressed: () => isDelete(),
                                           icon: const Icon(Icons
                                               .admin_panel_settings_outlined),
                                         );
@@ -342,6 +459,12 @@ class PostCard extends ConsumerWidget {
                                     error: (error, stackTrace) =>
                                         Text(error.toString()),
                                   ),
+                              IconButton(
+                                onPressed: () {
+                                  isConfirmGift();
+                                },
+                                icon: const Icon(Icons.card_giftcard),
+                              ),
                             ],
                           ),
                         ],

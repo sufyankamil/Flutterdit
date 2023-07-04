@@ -26,6 +26,7 @@ class Constants {
   static const String skipText = 'Skip';
   static const String diveInText = 'Dive in to the world of Reddit';
   static const String continueWithGoogle = 'Continue with Google';
+  static const String defaultEmail = 'guest@gmail.com';
 
   // Constants for TaskPage
   static const String homeRoute = '/home';
@@ -73,10 +74,15 @@ class Constants {
   static const communitiesCollection = 'communities';
   static const postsCollection = 'posts';
   static const commentsCollection = 'comments';
-  static const tabWidgets = [FeedScreen(), AddPost(), ];
+  static const tabWidgets = [
+    FeedScreen(),
+    AddPost(),
+  ];
 
-  static const IconData up = IconData(0xe800, fontFamily: 'MyFlutterApp', fontPackage: null);
-  static const IconData down = IconData(0xe801, fontFamily: 'MyFlutterApp', fontPackage: null);
+  static const IconData up =
+      IconData(0xe800, fontFamily: 'MyFlutterApp', fontPackage: null);
+  static const IconData down =
+      IconData(0xe801, fontFamily: 'MyFlutterApp', fontPackage: null);
 
   static const awardsPath = 'assets/images/awards';
 
@@ -90,6 +96,6 @@ class Constants {
     'thankyou': '${Constants.awardsPath}/thankyou.png',
     'til': '${Constants.awardsPath}/til.png',
   };
-  }
+}
 
   // Copyright (c) Sufyan Kamil. All rights reserved.

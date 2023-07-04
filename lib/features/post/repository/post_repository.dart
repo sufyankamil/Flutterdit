@@ -138,9 +138,33 @@ class PostRepository {
     }
   }
 
+  // Function to add awards(take the awards from my profile and add it to the post of another user)
+  FutureVoid awardPost(Post post, String award, String senderId) async {
+    try {
+      _post.doc(post.id).update({
+        'awards': FieldValue.arrayUnion([award]),
+      });
+      _users.doc(senderId).update({
+        'awards': FieldValue.arrayRemove([award]),
+      });
+      return right(
+        _users.doc(post.id).update({
+          'awards': FieldValue.arrayUnion([award]),
+        }),
+      );
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
   CollectionReference get _post =>
       _firestore.collection(Constants.postsCollection);
 
   CollectionReference get _comments =>
       _firestore.collection(Constants.commentsCollection);
+
+  CollectionReference get _users =>
+      _firestore.collection(Constants.usersCollection);
 }

@@ -288,4 +288,32 @@ class PostController extends StateNotifier<bool> {
   Stream<List<Comments>> getComments(String postId) {
     return _postRepository.getComments(postId);
   }
+
+  void awardsPost({
+    required Post post,
+    required String award,
+    required BuildContext context,
+  }) async {
+    final user = _ref.read(userProvider)!;
+
+    final result = await _postRepository.awardPost(post, award, user.uid);
+
+    result.fold(
+      (failure) {
+        showSnackBar(context, failure.message);
+      },
+      (success) {
+          _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+                UserKarma.awardPost,
+                context,
+              );
+        // if state is null then don't do anything, but if state is not null then remove awards from the array.
+        _ref.read(userProvider.notifier).update((state) {
+          state?.awards.remove(award);
+          return state;
+        });
+        Routemaster.of(context).pop();
+      },
+    );
+  }
 }
