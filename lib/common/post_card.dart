@@ -20,11 +20,11 @@ class PostCard extends ConsumerWidget {
     ref.read(postControllerProvider.notifier).deletePost(post, context);
   }
 
-  void upvotePost(WidgetRef ref) {
+  void upVotePost(WidgetRef ref) {
     ref.read(postControllerProvider.notifier).upVotePost(post);
   }
 
-  void downvotePost(WidgetRef ref) {
+  void downVotePost(WidgetRef ref) {
     ref.read(postControllerProvider.notifier).downVotePost(post);
   }
 
@@ -34,6 +34,10 @@ class PostCard extends ConsumerWidget {
 
   void navigateToCommunity(BuildContext context) async {
     Routemaster.of(context).push('/${post.communityName}');
+  }
+
+  void navigateToComments(BuildContext context) {
+    Routemaster.of(context).push('/posts/${post.id}/comments');
   }
 
   @override
@@ -47,8 +51,6 @@ class PostCard extends ConsumerWidget {
     final currentTheme = ref.watch(themeNotifierProvider);
 
     final user = ref.watch(userProvider)!;
-
-    bool enableComment = false;
 
     isDelete() {
       showDialog(
@@ -260,7 +262,7 @@ class PostCard extends ConsumerWidget {
                               Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () => upvotePost(ref),
+                                    onPressed: () => upVotePost(ref),
                                     icon: Icon(
                                       Icons.arrow_upward,
                                       color: post.upVotes.contains(user.uid)
@@ -279,7 +281,7 @@ class PostCard extends ConsumerWidget {
                                     ),
                                   ),
                                   IconButton(
-                                    onPressed: () => downvotePost(ref),
+                                    onPressed: () => downVotePost(ref),
                                     icon: Icon(
                                       Icons.arrow_downward,
                                       color: post.downVotes.contains(user.uid)
@@ -298,24 +300,26 @@ class PostCard extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      enableComment = true;
-                                    },
-                                    icon: const Icon(Icons.comment),
-                                  ),
-                                  Text(
-                                    post.commentCount.toString() == '0'
-                                        ? 'Comment'
-                                        : post.commentCount.toString(),
-                                    style: TextStyle(
-                                      color: currentTheme
-                                          .textTheme.bodyLarge!.color,
+                              GestureDetector(
+                                onTap: () => navigateToComments(context),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          navigateToComments(context),
+                                      icon: const Icon(Icons.comment),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      post.commentCount.toString() == '0'
+                                          ? 'Comment'
+                                          : post.commentCount.toString(),
+                                      style: TextStyle(
+                                        color: currentTheme
+                                            .textTheme.bodyLarge!.color,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               ref
                                   .watch(getCommunityByNameProvider(
@@ -336,7 +340,7 @@ class PostCard extends ConsumerWidget {
                                     loading: () =>
                                         const CircularProgressIndicator(),
                                     error: (error, stackTrace) =>
-                                        const Text('Error'),
+                                        Text(error.toString()),
                                   ),
                             ],
                           ),
@@ -348,7 +352,8 @@ class PostCard extends ConsumerWidget {
               )
             ],
           ),
-        )
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }

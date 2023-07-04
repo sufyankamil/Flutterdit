@@ -2,12 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:reddit/common/enums.dart';
 import 'package:reddit/features/post/repository/post_repository.dart';
+import 'package:reddit/features/user_profiles/controller/user_profile_controller.dart';
 import 'package:reddit/models/post_model.dart';
+import 'package:reddit/theme/pallete.dart';
 import 'package:routemaster/routemaster.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../common/utils.dart';
+import '../../../models/comment_model.dart';
 import '../../../models/community_model.dart';
 import '../../../providers/storage_repository.dart';
 import '../../auth/controller/auth_controller.dart';
@@ -31,9 +36,14 @@ final userPostsProvider =
   return postController.fetchUserPosts(communities);
 });
 
-final postByIdProvider = StreamProvider.family<Post, String>((ref, id) {
+final postByIdProvider = StreamProvider.family((ref, String postId) {
   final postController = ref.watch(postControllerProvider.notifier);
-  return postController.getpostById(id);
+  return postController.getpostById(postId);
+});
+
+final commentsProvider = StreamProvider.family((ref, String postId) {
+  final postController = ref.watch(postControllerProvider.notifier);
+  return postController.getComments(postId);
 });
 
 class PostController extends StateNotifier<bool> {
@@ -79,6 +89,12 @@ class PostController extends StateNotifier<bool> {
     );
 
     final result = await _postRepository.addPost(post);
+    if (context.mounted) {
+      _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+            UserKarma.textPost,
+            context,
+          );
+    }
     state = false;
     result.fold(
       (failure) {
@@ -118,6 +134,12 @@ class PostController extends StateNotifier<bool> {
     );
 
     final result = await _postRepository.addPost(post);
+    if (context.mounted) {
+      _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+            UserKarma.linkPost,
+            context,
+          );
+    }
     state = false;
     result.fold(
       (failure) {
@@ -168,6 +190,12 @@ class PostController extends StateNotifier<bool> {
         );
 
         final result = await _postRepository.addPost(post);
+        if (context.mounted) {
+          _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+                UserKarma.imagePost,
+                context,
+              );
+        }
         state = false;
         result.fold(
           (failure) {
@@ -192,12 +220,21 @@ class PostController extends StateNotifier<bool> {
 
   void deletePost(Post post, BuildContext context) async {
     final result = await _postRepository.deletePost(post);
+    if (context.mounted) {
+      _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+            UserKarma.deletePost,
+            context,
+          );
+    }
     result.fold(
       (failure) {
         showSnackBar(context, failure.message);
       },
       (success) {
-        showSnackBar(context, 'Post deleted successfully');
+        Fluttertoast.showToast(
+            backgroundColor: Pallete.redColor,
+            gravity: ToastGravity.CENTER,
+            msg: 'Post deleted successfully');
       },
     );
   }
@@ -213,43 +250,42 @@ class PostController extends StateNotifier<bool> {
   }
 
   void addComment({
-    Post? post,
-    required String comment,
+    required String text,
+    required Post post,
     required BuildContext context,
   }) async {
     final user = _ref.read(userProvider)!;
-    final commentPost = Post(
-      comments: comment,
+    Comments comment = Comments(
+      id: const Uuid().v4(),
+      text: text,
       createdAt: DateTime.now(),
-      username: user.name,
-      uid: user.uid,
-      communityName: post!.communityName,
-      communityProfile: post.communityProfile,
-      id: post.id,
-      title: post.title,
-      description: post.description,
-      upVotes: post.upVotes,
-      downVotes: post.downVotes,
-      commentCount: post.commentCount,
-      type: post.type,
-      awards: post.awards,
-      link: post.link,
+      postId: post.id,
+      profilePic: user.photoUrl,
+      userName: user.name,
+      userId: user.uid,
     );
-
-    final result =
-        await _postRepository.addComment(commentPost, post.id, user.uid);
-
+    final result = await _postRepository.addComments(comment);
+    if (context.mounted) {
+      _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+            UserKarma.comment,
+            context,
+          );
+    }
     result.fold(
       (failure) {
         showSnackBar(context, failure.message);
       },
       (success) {
-        showSnackBar(context, 'Comment added successfully');
+        null;
       },
     );
   }
 
-  Stream<Post> getpostById(String id) {
-    return _postRepository.getpostById(id);
+  Stream<Post> getpostById(String postId) {
+    return _postRepository.getpostById(postId);
+  }
+
+  Stream<List<Comments>> getComments(String postId) {
+    return _postRepository.getComments(postId);
   }
 }

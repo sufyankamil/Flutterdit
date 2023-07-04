@@ -4,6 +4,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:reddit/common/constants.dart';
 import 'package:reddit/providers/type_defs.dart';
 
+import '../../../models/comment_model.dart';
 import '../../../models/community_model.dart';
 import '../../../models/post_model.dart';
 import '../../../providers/failure.dart';
@@ -94,36 +95,6 @@ class PostRepository {
     }
   }
 
-  // function to add comment to post
-  FutureVoid addComment(Post post, String comment, String userId) async {
-    try {
-      if (post.comments!.contains(userId)) {
-        _post.doc(post.id).update({
-          'comments': FieldValue.arrayUnion([
-            {
-              'comment': comment,
-              'userId': userId,
-              'createdAt': DateTime.now().toIso8601String(),
-            }
-          ]),
-        });
-      }
-      return right(_post.doc(post.id).update({
-        'comments': FieldValue.arrayUnion([
-          {
-            'comment': comment,
-            'userId': userId,
-            'createdAt': DateTime.now().toIso8601String(),
-          }
-        ]),
-      }));
-    } on FirebaseException catch (e) {
-      throw e.message!;
-    } catch (e) {
-      return left(Failure(e.toString()));
-    }
-  }
-
   Stream<Post> getpostById(String id) {
     try {
       return _post.doc(id).snapshots().map(
@@ -136,6 +107,40 @@ class PostRepository {
     }
   }
 
+  FutureVoid addComments(Comments comment) async {
+    try {
+      await _comments.doc(comment.id).set(comment.toMap());
+      return right(_post.doc(comment.postId).update({
+        'commentCount': FieldValue.increment(1),
+      }));
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  Stream<List<Comments>> getComments(String postId) {
+    try {
+      return _comments
+          .where('postId', isEqualTo: postId)
+          .orderBy('createdAt', descending: true)
+          .snapshots()
+          .map(
+            (event) => event.docs
+                .map((e) => Comments.fromMap(e.data() as Map<String, dynamic>))
+                .toList(),
+          );
+    } on FirebaseException catch (e) {
+      throw e.message!;
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   CollectionReference get _post =>
       _firestore.collection(Constants.postsCollection);
+
+  CollectionReference get _comments =>
+      _firestore.collection(Constants.commentsCollection);
 }

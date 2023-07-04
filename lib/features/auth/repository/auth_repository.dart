@@ -45,8 +45,6 @@ class AuthRepository {
 
       UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-      print(userCredential);
-
       UserModel user;
 
       if(userCredential.additionalUserInfo!.isNewUser){

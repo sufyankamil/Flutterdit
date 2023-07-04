@@ -86,8 +86,6 @@ class _AddPostTypeState extends ConsumerState<AddPostType> {
   Widget build(BuildContext context) {
     final isTypeImage = widget.type == 'image';
 
-    final isTypeVideo = widget.type == 'video';
-
     final isTypeText = widget.type == 'text';
 
     final isTypeLink = widget.type == 'link';

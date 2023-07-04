@@ -45,7 +45,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     // Check internet connectivity
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
-      print('checking net');
       if(context.mounted) {
         showDialog(
           context: context,

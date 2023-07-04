@@ -6,7 +6,6 @@ import 'package:reddit/common/post_card.dart';
 import 'package:routemaster/routemaster.dart';
 
 import '../../auth/controller/auth_controller.dart';
-import '../../post/controller/post_controller.dart';
 import '../controller/user_profile_controller.dart';
 
 class UserProfileScreen extends ConsumerWidget {

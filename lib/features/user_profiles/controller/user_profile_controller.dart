@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:reddit/common/enums.dart';
 import 'package:reddit/models/user_modal.dart';
 import 'package:routemaster/routemaster.dart';
 
@@ -88,5 +90,16 @@ class UserProfileController extends StateNotifier<bool> {
 
   Stream<List<Post>> getUserPosts(String uid) {
     return _userProfileRepository.getUserPosts(uid);
+  }
+
+  void updateUserKarma(UserKarma karma, BuildContext context) async {
+    UserModel user = _ref.read(userProvider)!;
+    user = user.copyWith(karma: user.karma + karma.karma);
+
+    final result = await _userProfileRepository.updateUserKarma(user);
+    result.fold((l) => Fluttertoast.showToast(msg: l.message), (r) {
+      _ref.read(userProvider.notifier).update((state) => user);
+      Fluttertoast.showToast(msg: 'Karma updated successfully');
+    });
   }
 }
