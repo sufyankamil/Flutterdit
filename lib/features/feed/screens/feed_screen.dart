@@ -12,28 +12,38 @@ class FeedScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(userCommunitiesProvider).when(
         data: (communities) => ref.watch(userPostsProvider(communities)).when(
-              data: (data) => ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final post = data[index];
-                  return PostCard(post: post);
-                },
-              ),
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
-              error: (err, stack) {
-                if(kDebugMode) {
-                  print(err);
-                }
-                return const Center(
-                  child: Text('Something went wrong'),
-                );
-              }
-            ),
+            data: (data) => data.length == 0
+                ? const Center(
+                    child: Text(
+                      'No Posts yet ! Start following some communities',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, int index) {
+                      final post = data[index];
+                      return PostCard(post: post);
+                    },
+                  ),
+            loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+            error: (err, stack) {
+              return Column(
+                children: [
+                  Center(
+                    child: Text(err.toString()),
+                  ),
+                  const CircularProgressIndicator(),
+                ],
+              );
+            }),
         error: (Object error, StackTrace stackTrace) {
           return const Center(
-            child: Text('Something went wrong'),
+            child: Text('Something went wrong !'),
           );
         },
         loading: () {

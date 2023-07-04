@@ -49,7 +49,6 @@ class SearchCommunityDelegate extends SearchDelegate {
                   title: Text(communities[index].name),
                   subtitle: Text(communities[index].description),
                 );
-                return null;
               },
             );
           },

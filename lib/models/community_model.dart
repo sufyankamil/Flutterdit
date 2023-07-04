@@ -6,7 +6,7 @@ class Community {
   final String avatar;
   final List<String> moderators;
   final List<String> members;
-  
+
   Community({
     required this.id,
     required this.name,
@@ -16,7 +16,7 @@ class Community {
     required this.moderators,
     required this.members,
   });
-  
+
   Community copyWith({
     String? id,
     String? name,
@@ -36,7 +36,7 @@ class Community {
       members: members ?? this.members,
     );
   }
-  
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -48,7 +48,7 @@ class Community {
       'members': members,
     };
   }
-  
+
   factory Community.fromMap(Map<String, dynamic> map) {
     return Community(
       id: map['id'],
@@ -90,7 +90,4 @@ class Community {
         moderators.hashCode ^
         members.hashCode;
   }
-
-  // static Community fromJson(Map<String, dynamic> json) => Community.fromMap(json);
-  
 }

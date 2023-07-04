@@ -5,13 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit/features/auth/controller/auth_controller.dart';
 import 'package:reddit/features/user_profiles/controller/user_profile_controller.dart';
-import 'package:routemaster/routemaster.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/utils.dart';
-import '../../../models/community_model.dart';
 import '../../../theme/pallete.dart';
-import '../../community/controller/community_controller.dart';
 
 class EditProfile extends ConsumerStatefulWidget {
   final String uid;

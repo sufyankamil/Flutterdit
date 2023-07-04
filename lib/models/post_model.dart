@@ -15,6 +15,7 @@ class Post {
   final String type;
   final DateTime createdAt;
   final List<String> awards;
+  final String? comments;
 
   Post({
     required this.id,
@@ -31,9 +32,8 @@ class Post {
     required this.type,
     required this.createdAt,
     required this.awards,
+    this.comments,
   });
-
-
 
   Post copyWith({
     String? id,
@@ -50,6 +50,7 @@ class Post {
     String? type,
     DateTime? createdAt,
     List<String>? awards,
+    String? comments,
   }) {
     return Post(
       id: id ?? this.id,
@@ -66,6 +67,7 @@ class Post {
       type: type ?? this.type,
       createdAt: createdAt ?? this.createdAt,
       awards: awards ?? this.awards,
+      comments: comments ?? this.comments,
     );
   }
 
@@ -85,6 +87,7 @@ class Post {
       'type': type,
       'createdAt': createdAt,
       'awards': awards,
+      'comments': comments,
     };
   }
 
@@ -104,12 +107,13 @@ class Post {
       type: map['type'],
       createdAt: map['createdAt'].toDate(),
       awards: List<String>.from(map['awards']),
+      comments: map['comments'],
     );
   }
 
   @override
   String toString() {
-    return 'Post(id: $id, title: $title, link: $link, description: $description, communityName: $communityName, communityProfile: $communityProfile, upVotes: $upVotes, downVotes: $downVotes, commentCount: $commentCount, username: $username, uid: $uid, type: $type, createdAt: $createdAt, awards: $awards)';
+    return 'Post(id: $id, title: $title, link: $link, description: $description, communityName: $communityName, communityProfile: $communityProfile, upVotes: $upVotes, downVotes: $downVotes, commentCount: $commentCount, username: $username, uid: $uid, type: $type, createdAt: $createdAt, awards: $awards, comments: $comments)';
   }
 
   @override
@@ -117,40 +121,39 @@ class Post {
     if (identical(this, other)) return true;
 
     return other is Post &&
-      other.id == id &&
-      other.title == title &&
-      other.link == link &&
-      other.description == description &&
-      other.communityName == communityName &&
-      other.communityProfile == communityProfile &&
-      listEquals(other.upVotes, upVotes) &&
-      listEquals(other.downVotes, downVotes) &&
-      other.commentCount == commentCount &&
-      other.username == username &&
-      other.uid == uid &&
-      other.type == type &&
-      other.createdAt == createdAt &&
-      listEquals(other.awards, awards);
+        other.id == id &&
+        other.title == title &&
+        other.link == link &&
+        other.description == description &&
+        other.communityName == communityName &&
+        other.communityProfile == communityProfile &&
+        listEquals(other.upVotes, upVotes) &&
+        listEquals(other.downVotes, downVotes) &&
+        other.commentCount == commentCount &&
+        other.username == username &&
+        other.uid == uid &&
+        other.type == type &&
+        other.createdAt == createdAt &&
+        other.comments == comments &&
+        listEquals(other.awards, awards);
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      title.hashCode ^
-      link.hashCode ^
-      description.hashCode ^
-      communityName.hashCode ^
-      communityProfile.hashCode ^
-      upVotes.hashCode ^
-      downVotes.hashCode ^
-      commentCount.hashCode ^
-      username.hashCode ^
-      uid.hashCode ^
-      type.hashCode ^
-      createdAt.hashCode ^
-      awards.hashCode;
+        title.hashCode ^
+        link.hashCode ^
+        description.hashCode ^
+        communityName.hashCode ^
+        communityProfile.hashCode ^
+        upVotes.hashCode ^
+        downVotes.hashCode ^
+        commentCount.hashCode ^
+        username.hashCode ^
+        uid.hashCode ^
+        type.hashCode ^
+        createdAt.hashCode ^
+        awards.hashCode ^
+        comments.hashCode;
   }
-
-
-
 }

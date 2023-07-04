@@ -10,6 +10,7 @@ import 'package:routemaster/routemaster.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/utils.dart';
+import '../../../models/post_model.dart';
 import '../../../providers/storage_repository.dart';
 import '../repository/community_repository.dart';
 
@@ -25,6 +26,14 @@ final communityControllerProvider =
     storageRepository: storageRepository,
   );
 });
+
+final getAllCommunityPostsProvider = StreamProvider.family<List<Post>, String>(
+  (ref, name) {
+    return ref
+        .read(communityControllerProvider.notifier)
+        .getCommunityPost(name);
+  },
+);
 
 // StreamProvider helps in cashing the data
 final userCommunitiesProvider = StreamProvider<List<Community>>((ref) {
@@ -86,12 +95,12 @@ class CommunityController extends StateNotifier<bool> {
     final uid = _ref.read(userProvider)?.uid ?? '';
     Either<Failure, void> result;
     if (community.members.contains(uid)) {
-       result = await _communityRepository.leaveCommunity(community.name, uid);
+      result = await _communityRepository.leaveCommunity(community.name, uid);
     } else {
-        result = await _communityRepository.joinCommunity(community.name, uid);
+      result = await _communityRepository.joinCommunity(community.name, uid);
     }
     result.fold((l) => showSnackBar(context, l.message), (r) {
-      if(community.members.contains(uid)) {
+      if (community.members.contains(uid)) {
         showSnackBar(context, 'Community left successfully');
       } else {
         showSnackBar(context, 'Community joined successfully');
@@ -149,7 +158,8 @@ class CommunityController extends StateNotifier<bool> {
     return _communityRepository.searchCommunity(query);
   }
 
-  void addMods(String communityName, List<String> uids, BuildContext context) async {
+  void addMods(
+      String communityName, List<String> uids, BuildContext context) async {
     state = true;
     final result = await _communityRepository.addMods(communityName, uids);
     result.fold((l) => showSnackBar(context, l.message), (r) {
@@ -157,5 +167,9 @@ class CommunityController extends StateNotifier<bool> {
       showSnackBar(context, 'Mods added successfully');
     });
     state = false;
+  }
+
+  Stream<List<Post>> getCommunityPost(String name) {
+    return _communityRepository.getCommunityPosts(name);
   }
 }
