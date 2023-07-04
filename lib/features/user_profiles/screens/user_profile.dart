@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:routemaster/routemaster.dart';
 
 import '../../auth/controller/auth_controller.dart';
 
@@ -9,8 +11,14 @@ class UserProfileScreen extends ConsumerWidget {
 
   const UserProfileScreen({Key? key, required this.uid}) : super(key: key);
 
+  void navigateToEditUser(BuildContext context) {
+    Routemaster.of(context).push('/edit-profile/$uid');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    // print(isEmailVerified);
     return Scaffold(
       body: ref.watch(getUserDataProvider(uid)).when(
             data: (user) => NestedScrollView(
@@ -46,7 +54,7 @@ class UserProfileScreen extends ConsumerWidget {
                             padding:
                                 const EdgeInsets.only(left: 24, bottom: 36),
                             child: OutlinedButton(
-                              onPressed: () {},
+                              onPressed: () => navigateToEditUser(context),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 side: const BorderSide(color: Colors.white),
@@ -72,7 +80,7 @@ class UserProfileScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                user.isAuthenticated
+                                isEmailVerified
                                     ? IconButton(
                                         icon: const FaIcon(
                                           FontAwesomeIcons.check,
@@ -81,6 +89,15 @@ class UserProfileScreen extends ConsumerWidget {
                                         onPressed: () {},
                                       )
                                     : const SizedBox.shrink(),
+                                // user.isAuthenticated
+                                //     ? IconButton(
+                                //         icon: const FaIcon(
+                                //           FontAwesomeIcons.check,
+                                //           color: Colors.green,
+                                //         ),
+                                //         onPressed: () {},
+                                //       )
+                                //     : const SizedBox.shrink(),
                               ],
                             ),
                             Padding(

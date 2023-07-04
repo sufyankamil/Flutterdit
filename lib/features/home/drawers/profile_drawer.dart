@@ -16,6 +16,10 @@ class ProfileDrawer extends ConsumerWidget {
     ref.read(authControllerProvider.notifier).logout();
   }
 
+  void toggleTheme(WidgetRef ref) {
+    ref.read(themeNotifierProvider.notifier).toggleTheme();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
@@ -61,14 +65,16 @@ class ProfileDrawer extends ConsumerWidget {
               onTap: () {},
             ),
             ListTile(
-              leading: const Icon(Icons.color_lens_outlined),
+              leading: const Icon(Icons.shield_moon_outlined),
               title: const Text('Switch Theme'),
-              onTap: () {},
+              onTap: () {
+                toggleTheme(ref);
+              },
             ),
-            const SizedBox(height: 20),
-            Switch.adaptive(
-              value: true,
-              onChanged: (value) {},
+            ListTile(
+              leading: const Icon(Icons.help),
+              title: const Text('Help'),
+              onTap: () {},
             ),
             const SizedBox(height: 20),
             ElevatedButton(

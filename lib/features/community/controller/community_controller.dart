@@ -100,16 +100,6 @@ class CommunityController extends StateNotifier<bool> {
     state = false;
   }
 
-  // void leaveCommunity(Community community, BuildContext context) async {
-  //   state = true;
-  //   final uid = _ref.read(userProvider)?.uid ?? '';
-  //   final result = await _communityRepository.leaveCommunity(community.name, uid);
-  //   result.fold((l) => showSnackBar(context, l.message), (r) {
-  //     showSnackBar(context, 'Community left successfully');
-  //   });
-  //   state = false;
-  // }
-
   Stream<List<Community>> getCommunities() {
     final uid = _ref.read(userProvider)?.uid ?? '';
     return _communityRepository.getCommunities(uid);

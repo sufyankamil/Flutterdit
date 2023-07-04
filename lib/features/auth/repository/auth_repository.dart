@@ -45,6 +45,8 @@ class AuthRepository {
 
       UserCredential userCredential = await _auth.signInWithCredential(credential);
 
+      print(userCredential);
+
       UserModel user;
 
       if(userCredential.additionalUserInfo!.isNewUser){
@@ -57,14 +59,18 @@ class AuthRepository {
           uid: userCredential.user!.uid,
           lastSeen: DateTime.now().toString(),
           isAuthenticated: true, // user is not guest
+          // emailVerified: false,
           karma: 0,
           awards: [],
         );
+        print('new user');
+        // print(user);
         await _users.doc(userCredential.user!.uid).set(user.toMap());
 
       } else {
         // get user from firestore
         print('user already exists');
+        print(userCredential.user!);
         user = await getUserData(userCredential.user!.uid).first;
       }
       return right(user);

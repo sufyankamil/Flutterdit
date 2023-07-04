@@ -1,3 +1,6 @@
+import '../features/feed/screens/feed_screen.dart';
+import '../features/post/screens/add_post_screen.dart';
+
 class Constants {
   Constants._privateConstructor();
 
@@ -68,6 +71,7 @@ class Constants {
   static const communitiesCollection = 'communities';
   static const postsCollection = 'posts';
   static const commentsCollection = 'comments';
+  static const tabWidgets = [FeedScreen(), AddPost(), ];
   }
 
   // Copyright (c) Sufyan Kamil. All rights reserved.
