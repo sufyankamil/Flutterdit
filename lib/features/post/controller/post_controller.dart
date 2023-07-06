@@ -210,13 +210,30 @@ class PostController extends StateNotifier<bool> {
     );
   }
 
-  Stream<List<Post>> fetchUserPosts(List<Community> communities) {
-    if (communities.isNotEmpty) {
-      return _postRepository.fetchUserPosts(communities);
-    } else {
-      return Stream.value([]);
+  // Stream<List<Post>> fetchUserPosts(List<Community> communities) {
+  //   if (communities.isNotEmpty) {
+  //     return _postRepository.fetchUserPosts(communities);
+  //   }
+  //   return Stream.value([]);
+  // }
+
+  Stream<List<Post>> fetchUserPosts(List<Community> communities) async* {
+  yield []; // Emit initial empty list to indicate loading
+
+  if (communities.isNotEmpty) {
+    try {
+      final posts = _postRepository.fetchUserPosts(communities);
+      yield* posts; // Emit posts as they come in
+      // yield posts; // Emit the actual posts
+    } catch (error) {
+      // Handle error if needed
+      yield []; // Emit empty list to indicate loading error
     }
+  } else {
+    yield []; // Emit empty list to indicate no data
   }
+}
+
 
   void deletePost(Post post, BuildContext context) async {
     final result = await _postRepository.deletePost(post);
@@ -303,10 +320,10 @@ class PostController extends StateNotifier<bool> {
         showSnackBar(context, failure.message);
       },
       (success) {
-          _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
-                UserKarma.awardPost,
-                context,
-              );
+        _ref.read(userProfileControllerProvider.notifier).updateUserKarma(
+              UserKarma.awardPost,
+              context,
+            );
         // if state is null then don't do anything, but if state is not null then remove awards from the array.
         _ref.read(userProvider.notifier).update((state) {
           state?.awards.remove(award);

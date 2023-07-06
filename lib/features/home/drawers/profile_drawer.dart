@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit/theme/pallete.dart';
@@ -18,6 +19,15 @@ class ProfileDrawer extends ConsumerWidget {
 
   void toggleTheme(WidgetRef ref) {
     ref.read(themeNotifierProvider.notifier).toggleTheme();
+  }
+
+  Future<bool> checkConnectivity() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  void navigateToCreateCommunity(BuildContext context) {
+    Routemaster.of(context).push('/create-community');
   }
 
   @override
@@ -51,18 +61,48 @@ class ProfileDrawer extends ConsumerWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 10),
+            FutureBuilder<bool>(
+              future: checkConnectivity(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!) {
+                    return const Text('Online',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ));
+                  } else {
+                    return Text('Offline',
+                        style: TextStyle(
+                          color: Pallete.redColor,
+                          fontWeight: FontWeight.bold,
+                        ));
+                  }
+                } else {
+                  return const Text('Loading...');
+                }
+              },
+            ),
             const SizedBox(height: 20),
             const Divider(),
             const SizedBox(height: 20),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Profile'),
+              title: const Text('My Profile'),
               onTap: () => navigateToProfile(context, user.uid),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
               onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Create Community'),
+              onTap: () {
+                navigateToCreateCommunity(context);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.shield_moon_outlined),

@@ -40,56 +40,66 @@ class _HomeState extends ConsumerState<Home> {
     final currentTheme = ref.watch(themeNotifierProvider);
 
     final isGuest = !user!.isAuthenticated;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        centerTitle: false,
-        leading: Builder(builder: (context) {
-          return IconButton(
-            onPressed: () => displayDrawer(context),
-            icon: const Icon(Icons.menu),
-          );
-        }),
-        actions: [
-          IconButton(
-            onPressed: () {
-              showSearch(
-                  context: context, delegate: SearchCommunityDelegate(ref));
-            },
-            icon: const Icon(Icons.search),
-          ),
-          Builder(builder: (context) {
-            return IconButton(
-              onPressed: () => displayEndDrawer(context),
-              icon: CircleAvatar(
-                radius: 15,
-                backgroundImage: NetworkImage(user?.photoUrl ?? ''),
+    return MaterialApp(
+      theme: currentTheme,
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+          extendBody: true,
+          appBar: AppBar(
+            title: const Text('Home'),
+            centerTitle: false,
+            leading: Builder(builder: (context) {
+              return IconButton(
+                onPressed: () => displayDrawer(context),
+                icon: const Icon(Icons.menu),
+              );
+            }),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  showSearch(
+                      context: context, delegate: SearchCommunityDelegate(ref));
+                },
+                icon: const Icon(Icons.search),
               ),
-            );
-          }),
-        ],
-      ),
-      drawer: const CommunityListDrawer(),
-      endDrawer: isGuest ? null : const ProfileDrawer(),
-      body: Constants.tabWidgets[_page],
-      bottomNavigationBar: isGuest
-          ? const SizedBox.shrink()
-          : CupertinoTabBar(
-              activeColor: currentTheme.iconTheme.color,
-              backgroundColor: currentTheme.backgroundColor,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
-                  label: 'Add Post',
-                ),
-              ],
-              onTap: onPageChanged,
-              currentIndex: _page,
-            ),
+              Builder(builder: (context) {
+                return IconButton(
+                  onPressed: () => displayEndDrawer(context),
+                  icon: CircleAvatar(
+                    radius: 15,
+                    backgroundImage: NetworkImage(user.photoUrl),
+                  ),
+                );
+              }),
+            ],
+          ),
+          drawer: const CommunityListDrawer(),
+          endDrawer: isGuest ? null : const ProfileDrawer(),
+          body: Constants.tabWidgets[_page],
+          bottomNavigationBar: isGuest
+              ? const SizedBox.shrink()
+              : Theme(
+                  data: Theme.of(context).copyWith(
+                    canvasColor: Colors.transparent,
+                  ),
+                  child: CupertinoTabBar(
+                    activeColor: currentTheme.iconTheme.color,
+                    // backgroundColor: currentTheme.backgroundColor,
+                    backgroundColor: const Color(0x00ffffff),
+                    items: const [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.home),
+                        label: 'Home',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.add),
+                        label: 'Add Post',
+                      ),
+                    ],
+                    onTap: onPageChanged,
+                    currentIndex: _page,
+                  ),
+                )),
     );
   }
 }

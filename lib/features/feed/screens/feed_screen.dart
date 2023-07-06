@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit/common/post_card.dart';
@@ -18,6 +17,8 @@ class FeedScreen extends ConsumerWidget {
     final currentTheme = ref.watch(themeNotifierProvider);
 
     final isGuest = !user!.isAuthenticated;
+
+    final isLoading = ref.watch(postControllerProvider);
 
     return ref.watch(userCommunitiesProvider).when(
         data: (communities) => ref.watch(userPostsProvider(communities)).when(
@@ -64,16 +65,42 @@ class FeedScreen extends ConsumerWidget {
                           textAlign: TextAlign.center,
                         ),
                       )
-                : ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, int index) {
-                      final post = data[index];
-                      return PostCard(post: post);
-                    },
-                  ),
-            loading: () => const Center(
-                  child: CircularProgressIndicator(),
+                : isLoading
+                    ? const Column(
+                        children: [
+                          Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Loading Posts',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      )
+                    : ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, int index) {
+                          final post = data[index];
+                          return PostCard(post: post);
+                        },
+                      ),
+            loading: () => const Column(
+              children: [
+                Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                SizedBox(height: 20),
+                Text(
+                  'Loading Posts',
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
+              ],
+            ),
             error: (err, stack) {
               return Column(
                 children: [
