@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit/common/constants.dart';
@@ -6,6 +7,7 @@ import 'package:reddit/features/home/delegates/search_community_delegate.dart';
 import 'package:reddit/features/home/drawers/community_list_drawer.dart';
 import 'package:reddit/features/home/drawers/profile_drawer.dart';
 import 'package:reddit/theme/pallete.dart';
+import 'package:routemaster/routemaster.dart';
 
 import '../auth/controller/auth_controller.dart';
 
@@ -31,6 +33,10 @@ class _HomeState extends ConsumerState<Home> {
     setState(() {
       _page = page;
     });
+  }
+
+  void pushToHome() {
+    Routemaster.of(context).push('/add-post');
   }
 
   @override
@@ -62,6 +68,10 @@ class _HomeState extends ConsumerState<Home> {
                 },
                 icon: const Icon(Icons.search),
               ),
+              IconButton(
+                onPressed: () => pushToHome(),
+                icon: const Icon(Icons.add),
+              ),
               Builder(builder: (context) {
                 return IconButton(
                   onPressed: () => displayEndDrawer(context),
@@ -76,7 +86,7 @@ class _HomeState extends ConsumerState<Home> {
           drawer: const CommunityListDrawer(),
           endDrawer: isGuest ? null : const ProfileDrawer(),
           body: Constants.tabWidgets[_page],
-          bottomNavigationBar: isGuest
+          bottomNavigationBar: isGuest || kIsWeb
               ? const SizedBox.shrink()
               : Theme(
                   data: Theme.of(context).copyWith(

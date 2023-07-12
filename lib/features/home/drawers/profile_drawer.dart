@@ -30,6 +30,10 @@ class ProfileDrawer extends ConsumerWidget {
     Routemaster.of(context).push('/create-community');
   }
 
+  void pushToSubscribe(BuildContext context) {
+    Routemaster.of(context).push('/subscribe');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
@@ -87,6 +91,16 @@ class ProfileDrawer extends ConsumerWidget {
             const SizedBox(height: 20),
             const Divider(),
             const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.workspace_premium, color: Colors.red),
+              title: const Text('Reddit Premium',
+                  style: TextStyle(
+                    color: Colors.red,
+                  )),
+              onTap: () {
+                pushToSubscribe(context);
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('My Profile'),

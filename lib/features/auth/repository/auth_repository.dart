@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -39,15 +40,33 @@ class AuthRepository {
 
   FutureEither<UserModel> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      UserCredential userCredential;
+      if (kIsWeb) {
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider
+            .addScope('https://www.googleapis.com/auth/contacts.readonly');
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: (await googleUser!.authentication).accessToken,
-        idToken: (await googleUser.authentication).idToken,
-      );
+        userCredential = await _auth.signInWithPopup(googleProvider);
 
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+        await _auth.setPersistence(Persistence.LOCAL);
+      } else {
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+        final credential = GoogleAuthProvider.credential(
+          accessToken: (await googleUser!.authentication).accessToken,
+          idToken: (await googleUser.authentication).idToken,
+        );
+
+        userCredential = await _auth.signInWithCredential(credential);
+      }
+      // final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      // final credential = GoogleAuthProvider.credential(
+      //   accessToken: (await googleUser!.authentication).accessToken,
+      //   idToken: (await googleUser.authentication).idToken,
+      // );
+
+      // userCredential = await _auth.signInWithCredential(credential);
 
       UserModel user;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit/responsive/responsive.dart';
 import 'package:reddit/theme/pallete.dart';
 
 import '../../../common/constants.dart';
@@ -66,7 +67,9 @@ class Login extends ConsumerWidget {
                 const SizedBox(
                   height: 50,
                 ),
-                const SignInButton(),
+                const Responsive(
+                  child: SignInButton(),
+                )
               ],
             ),
     );
