@@ -12,6 +12,7 @@ import 'package:routemaster/routemaster.dart';
 import '../auth/controller/auth_controller.dart';
 
 class Home extends ConsumerStatefulWidget {
+  // final Object paymentIntent;
   const Home({super.key});
 
   @override
@@ -44,6 +45,8 @@ class _HomeState extends ConsumerState<Home> {
     final user = ref.watch(userProvider);
 
     final currentTheme = ref.watch(themeNotifierProvider);
+
+    // print(widget.paymentIntent);
 
     final isGuest = !user!.isAuthenticated;
     return MaterialApp(

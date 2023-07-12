@@ -10,6 +10,7 @@ import '../controller/user_profile_controller.dart';
 
 class UserProfileScreen extends ConsumerWidget {
   final String uid;
+  // final Object paymentIntent;
 
   const UserProfileScreen({Key? key, required this.uid}) : super(key: key);
 

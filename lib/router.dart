@@ -20,7 +20,8 @@ import 'features/premium/premium_subs.dart';
 // login route
 final loggedInRoute = RouteMap(
   routes: {
-    '/': (_) => const MaterialPage(child: Home()),
+    '/': (route) => const MaterialPage(
+        child: Home()),
     '/create-community': (_) =>
         const MaterialPage(child: CreateCommunityScreen()),
     '/:name': (route) => MaterialPage(
@@ -42,6 +43,7 @@ final loggedInRoute = RouteMap(
     '/profile/:uid': (routeData) => MaterialPage(
             child: UserProfileScreen(
           uid: routeData.pathParameters['uid']!,
+          // paymentIntent: routeData.pathParameters['id']!,
         )),
     '/edit-profile/:uid': (routeData) => MaterialPage(
             child: EditProfile(
