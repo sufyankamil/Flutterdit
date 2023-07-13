@@ -18,8 +18,6 @@ void main() async {
   await dotenv.load(
       fileName: '.env'); // Loads the environment variables from .env file
   WidgetsFlutterBinding.ensureInitialized();
-  // Stripe.publishableKey =
-  //     'pk_test_51NSdzzSCy3tXepZtDFIeDtiOqvUXXdBcSLsA0RPKF15iIVzHPVQPdVXwZzLO5GimgpMEN6cfyFSliMRv1KJ9THjc00s0aF7Ben';
   Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

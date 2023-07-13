@@ -53,7 +53,10 @@ class _PremiumButtonState extends State<PremiumButton> {
         .initPaymentSheet(
             paymentSheetParameters: SetupPaymentSheetParameters(
                 paymentIntentClientSecret: paymentIntentData!['client_secret'],
-                merchantDisplayName: 'Sufyan'))
+                merchantDisplayName: 'Sufyan',
+              style: ThemeMode.dark
+
+            ))
         .then((value) => {
               paymentData = StripePaymentModel(
                 paymentId: paymentIntentData!['id'],
