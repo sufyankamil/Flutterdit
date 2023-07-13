@@ -21,5 +21,3 @@ Key Features:
 7. Dark Mode and Custom Themes: Flutterdit offers a visually appealing experience with support for dark mode and customizable themes, allowing users to personalize their app interface.
 
 Flutterdit strives to deliver an immersive and user-friendly Reddit-like experience, offering an array of features and a sleek design. Join the Flutterdit community today and discover a new way to engage, discuss, and share content with like-minded individuals.
-
-(Note: This is a fictional description created for the purpose of suggestion. Actual project details and features may differ based on your implementation.)
