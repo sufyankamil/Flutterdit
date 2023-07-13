@@ -8,15 +8,16 @@ import '../repository/auth_repository.dart';
 
 final userProvider = StateProvider<UserModel?>((ref) => null);
 
-final authControllerProvider = StateNotifierProvider<AuthController, bool>((ref) => AuthController(
-  authRepository: ref.watch(authRepositoryProvider),
-  ref: ref,
-));
+final authControllerProvider =
+    StateNotifierProvider<AuthController, bool>((ref) => AuthController(
+          authRepository: ref.watch(authRepositoryProvider),
+          ref: ref,
+        ));
 
 final authStateChangesProvider = StreamProvider<User?>((ref) {
   final authController = ref.watch(authControllerProvider.notifier);
   authController.authStateChanges.listen((user) {
-    if(user == null){
+    if (user == null) {
       ref.read(userProvider.notifier).update((state) => null);
     }
   });
@@ -28,23 +29,46 @@ final getUserDataProvider = StreamProvider.family((ref, String uid) {
   return authController.getUserData(uid);
 });
 
-
-class AuthController  extends StateNotifier<bool> {
+class AuthController extends StateNotifier<bool> {
   final AuthRepository _authRepository;
 
   final Ref _ref;
 
-  AuthController({required AuthRepository authRepository, required Ref ref}) : _authRepository = authRepository,
-  _ref = ref,
-  super(false); // loading state
+  AuthController({required AuthRepository authRepository, required Ref ref})
+      : _authRepository = authRepository,
+        _ref = ref,
+        super(false); // loading state
 
   Stream<User?> get authStateChanges => _authRepository.authStateChanges;
+
+  // void signInWithGoogle(BuildContext context, bool isFromLogin) async {
+  //   state = true;
+  //   final user = await _authRepository.signInWithGoogle(isFromLogin);
+  //   state = false;
+  //   user.fold(
+  //     (l) => showSnackBar(context, l.message),
+  //     (user) => _ref.read(userProvider.notifier).update((state) => user),
+  //   );
+  // }
 
   void signInWithGoogle(BuildContext context) async {
     state = true;
     final user = await _authRepository.signInWithGoogle();
     state = false;
-    user.fold((l) => showSnackBar(context,l.message), (user) => _ref.read(userProvider.notifier).update((state) => user),);
+    user.fold(
+      (l) => showSnackBar(context, l.message),
+      (user) => _ref.read(userProvider.notifier).update((state) => user),
+    );
+  }
+
+  void signInAsGuest(BuildContext context) async {
+    state = true;
+    final user = await _authRepository.signInAsGuest();
+    state = false;
+    user.fold(
+      (l) => showSnackBar(context, l.message),
+      (user) => _ref.read(userProvider.notifier).update((state) => user),
+    );
   }
 
   Stream<UserModel> getUserData(String uid) {
@@ -52,6 +76,6 @@ class AuthController  extends StateNotifier<bool> {
   }
 
   void logout() async {
-     _authRepository.logout();
+    _authRepository.logout();
   }
 }

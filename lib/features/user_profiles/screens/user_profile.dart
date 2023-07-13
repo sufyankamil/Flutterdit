@@ -10,6 +10,7 @@ import '../controller/user_profile_controller.dart';
 
 class UserProfileScreen extends ConsumerWidget {
   final String uid;
+  // final Object paymentIntent;
 
   const UserProfileScreen({Key? key, required this.uid}) : super(key: key);
 
@@ -20,7 +21,7 @@ class UserProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-    // print(isEmailVerified);
+
     return Scaffold(
       body: ref.watch(getUserDataProvider(uid)).when(
             data: (user) => NestedScrollView(

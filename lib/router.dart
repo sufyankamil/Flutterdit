@@ -1,5 +1,6 @@
 // login route
 import 'package:flutter/material.dart';
+import 'package:reddit/common/splash.dart';
 import 'package:reddit/features/auth/screens/login.dart';
 import 'package:reddit/features/community/screens/add_mod_screen.dart';
 import 'package:reddit/features/community/screens/community_screens.dart';
@@ -13,11 +14,14 @@ import 'package:reddit/features/user_profiles/screens/user_profile.dart';
 import 'package:routemaster/routemaster.dart';
 
 import 'features/community/screens/mod_tools_screen.dart';
+import 'features/post/screens/add_post_screen.dart';
+import 'features/premium/premium_subs.dart';
 
 // login route
 final loggedInRoute = RouteMap(
   routes: {
-    '/': (_) => const MaterialPage(child: Home()),
+    '/': (route) => const MaterialPage(
+        child: Home()),
     '/create-community': (_) =>
         const MaterialPage(child: CreateCommunityScreen()),
     '/:name': (route) => MaterialPage(
@@ -39,6 +43,7 @@ final loggedInRoute = RouteMap(
     '/profile/:uid': (routeData) => MaterialPage(
             child: UserProfileScreen(
           uid: routeData.pathParameters['uid']!,
+          // paymentIntent: routeData.pathParameters['id']!,
         )),
     '/edit-profile/:uid': (routeData) => MaterialPage(
             child: EditProfile(
@@ -52,6 +57,8 @@ final loggedInRoute = RouteMap(
             child: CommentScreen(
           postId: routeData.pathParameters['postId']!,
         )),
+    '/add-post': (routeData) => const MaterialPage(child: AddPost()),
+    '/subscribe': (routeData) => MaterialPage(child: RedditPremiumPage()),
   },
 );
 
@@ -59,5 +66,15 @@ final loggedInRoute = RouteMap(
 final loggedOutRoute = RouteMap(
   routes: {
     '/': (_) => const MaterialPage(child: Login()),
+  },
+);
+
+final initScreen = RouteMap(routes: {
+  '/initScreen': (_) => const MaterialPage(child: SplashScreen()),
+});
+
+final splashRoute = RouteMap(
+  routes: {
+    '/add-post': (_) => const MaterialPage(child: SplashScreen()),
   },
 );
